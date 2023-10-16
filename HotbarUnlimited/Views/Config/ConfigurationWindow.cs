@@ -27,6 +27,9 @@ public class ConfigurationWindow : TabbedSelectionWindow {
             MinimumSize = new Vector2(500.0f, 450.0f),
             MaximumSize = new Vector2(9999.0f, 9999.0f),
         };
+
+        ShowScrollBar = false;
+        RegularTabScrollBar = false;
         
         CommandController.RegisterCommands(this);
     }
@@ -89,7 +92,7 @@ public class GeneralSettingsTab : ITabItem {
         var hotkeyHeld = ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl;
         if (!hotkeyHeld) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
         ImGui.SetCursorPosY(ImGui.GetContentRegionMax().Y - ImGui.GetFrameHeight());
-        if (ImGui.Button("Reset Current Job", new Vector2(200.0f, ImGui.GetFrameHeight())) && hotkeyHeld) {
+        if (ImGui.Button("Reset Current Job", new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetFrameHeight())) && hotkeyHeld) {
             Config.ResetJob = true;
         }
         if (!hotkeyHeld) ImGui.PopStyleVar();
