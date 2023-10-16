@@ -55,5 +55,10 @@
   <ItemGroup>
     <None Remove="packages.lock.json" />
     <None Remove="WhoAmIAgain.json" />
+    <None Remove="HotbarUnlimited.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KamiLib\KamiLib.csproj" />
   </ItemGroup>
 </Project>
