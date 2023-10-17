@@ -49,6 +49,8 @@ public unsafe class OverlayWindow : Window {
                 var slotNodeSize = new Vector2(containingNode.Width, containingNode.Height);
 
                 var color = new ColorHelpers.HsvaColor(index * 0.3f, 0.80f, 1.0f, 1.0f);
+
+                if (!Config.EditEnabledHotbars[addonName]) continue;
                 
                 ImGui.SetNextWindowPos(hotbarPosition + containingNodePosition + slotNodePosition, ImGuiCond.Appearing);
                 ImGui.SetNextWindowSize(slotNodeSize, ImGuiCond.Always);

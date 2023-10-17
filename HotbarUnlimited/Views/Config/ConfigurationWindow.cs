@@ -89,6 +89,25 @@ public class GeneralSettingsTab : ITabItem {
         
         ImGui.Checkbox("Enable Edit Mode", ref Config.EditModeEnabled);
         
+        ImGuiHelpers.ScaledDummy(10.0f);
+
+        ImGui.Columns(2);
+        var collectionHalfSize = Config.EditEnabledHotbars.Count / 2 + 1;
+        foreach (var (hotbar, enabled) in Config.EditEnabledHotbars.Take(collectionHalfSize)) {
+            var isEnabled = enabled;
+            if (ImGui.Checkbox(hotbar, ref isEnabled)) {
+                Config.EditEnabledHotbars[hotbar] = isEnabled;
+            }
+        }
+        ImGui.NextColumn();
+        foreach (var (hotbar, enabled) in Config.EditEnabledHotbars.Skip(collectionHalfSize)) {
+            var isEnabled = enabled;
+            if (ImGui.Checkbox(hotbar, ref isEnabled)) {
+                Config.EditEnabledHotbars[hotbar] = isEnabled;
+            }
+        }
+        ImGui.Columns(1);
+        
         var hotkeyHeld = ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl;
         if (!hotkeyHeld) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
         ImGui.SetCursorPosY(ImGui.GetContentRegionMax().Y - ImGui.GetFrameHeight());
