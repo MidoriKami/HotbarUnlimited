@@ -17,6 +17,7 @@ public unsafe class OverlayWindow : Window {
     
     public OverlayWindow() : base("HotbarUnlimited Overlay") {
         Flags |= ImGuiWindowFlags.NoDecoration |
+                 ImGuiWindowFlags.NoBackground |
                  ImGuiWindowFlags.NoTitleBar |
                  ImGuiWindowFlags.NoInputs |
                  ImGuiWindowFlags.NoNav |
