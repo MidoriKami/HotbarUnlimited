@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using HotbarUnlimited.Controllers;
 using ImGuiNET;
 using KamiLib.Command;
@@ -121,7 +122,7 @@ public class GeneralSettingsTab : ITabItem {
     }
 }
 
-public class HotbarSelectable : ISelectable, IDrawable {
+public unsafe class HotbarSelectable : ISelectable, IDrawable {
     private Configuration Config => HotbarUnlimitedSystem.Config;
     
     public IDrawable Contents => this;
@@ -139,25 +140,40 @@ public class HotbarSelectable : ISelectable, IDrawable {
     
     public void Draw() {
         if (Config.SlotPositions.TryGetValue(HotbarName, out var indexDictionary)) {
+            var addon = (AtkUnitBase*) Service.GameGui.GetAddonByName(HotbarName);
+            var containingNode = addon->GetNodeById(2);
+            var containingNodePosition = new Vector2(containingNode->X, containingNode->Y);
             var configChanged = false;
-            foreach (var (index, position) in indexDictionary) {
-                if (ImGui.BeginTable("HotbarPositionTable", 2)) {
-                    ImGui.TableSetupColumn("##IndexColumn", ImGuiTableColumnFlags.WidthFixed, 25.0f * ImGuiHelpers.GlobalScale);
-                    ImGui.TableSetupColumn("##PositionColumn", ImGuiTableColumnFlags.WidthStretch);
+            
+            if (ImGui.BeginTable("HotbarPositionTable", 2)) {
+                ImGui.TableSetupColumn("##IndexColumn", ImGuiTableColumnFlags.WidthFixed, 75.0f * ImGuiHelpers.GlobalScale);
+                ImGui.TableSetupColumn("##PositionColumn", ImGuiTableColumnFlags.WidthStretch);
                     
+                ImGui.TableNextColumn();
+                ImGui.Text($"Container");
+                
+                ImGui.TableNextColumn();
+                ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+                if (ImGui.DragFloat2($"##Container{HotbarName}", ref containingNodePosition)) {
+                    containingNode->SetPositionFloat(containingNodePosition.X, containingNodePosition.Y);
+                }
+                
+                foreach (var (index, position) in indexDictionary) {
                     ImGui.TableNextColumn();
                     ImGui.Text($"{index + 1}");
 
                     ImGui.TableNextColumn();
                     var positionValue = position;
+                    ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
                     if (ImGui.DragFloat2($"##{HotbarName}{index}", ref positionValue)) {
                         Config.SlotPositions[HotbarName][index] = positionValue;
                         Config.DataChanged.Add(HotbarName);
                         configChanged = true;
                     }
-                    ImGui.EndTable();
                 }
+                ImGui.EndTable();
             }
+
             if (configChanged) Config.Save();
         }
         else {
