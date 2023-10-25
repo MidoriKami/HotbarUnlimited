@@ -36,7 +36,7 @@ public unsafe class OverlayWindow : Window {
             if (!((AtkUnitBase*) addon)->IsVisible) continue;
 
             var hotbarContainer = addon->AtkUnitBase.GetNodeById(2);
-            var hotbarPosition = new Vector2(hotbarContainer->X, hotbarContainer->Y);
+            var hotbarPosition = new Vector2(hotbarContainer->X, hotbarContainer->Y) * addon->AtkUnitBase.Scale;
 
             var savePending = false;
             
@@ -44,9 +44,9 @@ public unsafe class OverlayWindow : Window {
                 var slot = addon->Slot.GetPointer(index);
                 ref var containingNode = ref slot->ComponentDragDrop->AtkComponentBase.OwnerNode->AtkResNode;
 
-                var containingNodePosition = new Vector2(containingNode.X, containingNode.Y);
-                var slotNodePosition = new Vector2(containingNode.ParentNode->X, containingNode.ParentNode->Y);
-                var slotNodeSize = new Vector2(containingNode.Width, containingNode.Height);
+                var containingNodePosition = new Vector2(containingNode.X, containingNode.Y) * addon->AtkUnitBase.Scale;
+                var slotNodePosition = new Vector2(containingNode.ParentNode->X, containingNode.ParentNode->Y) * addon->AtkUnitBase.Scale;
+                var slotNodeSize = new Vector2(containingNode.Width, containingNode.Height) * addon->AtkUnitBase.Scale;
 
                 var color = new ColorHelpers.HsvaColor(index * 0.3f, 0.80f, 1.0f, 1.0f);
 
@@ -81,7 +81,7 @@ public unsafe class OverlayWindow : Window {
                             savePending = true;
                         }
                     
-                        containingNode.ParentNode->SetPositionFloat(position.X, position.Y);
+                        containingNode.ParentNode->SetPositionFloat( MathF.Ceiling(position.X / addon->AtkUnitBase.Scale), MathF.Ceiling(position.Y / addon->AtkUnitBase.Scale));
                     }
                     else {
                         ImGui.SetWindowPos(hotbarPosition + containingNodePosition + slotNodePosition);
