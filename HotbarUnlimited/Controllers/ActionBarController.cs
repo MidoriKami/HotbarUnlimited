@@ -44,7 +44,7 @@ public unsafe class ActionBarController : IDisposable {
         if (containingNode->X is 0 && containingNode->Y is 0) {
             originalAddonSize.TryAdd(args.AddonName, new Vector2(addon->RootNode->Width, addon->RootNode->Height));
             originalAddonPosition.TryAdd(args.AddonName, new Vector2(addon->X, addon->Y));
-            containingNode->SetPositionFloat(addon->X + containingNode->X, addon->Y + containingNode->Y);
+            containingNode->SetPositionFloat((addon->X + containingNode->X) / addon->Scale, (addon->Y + containingNode->Y) / addon->Scale);
             
             UpdateSlotPositions(args, addon);
         }
