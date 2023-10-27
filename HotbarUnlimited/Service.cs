@@ -10,4 +10,6 @@ internal class Service {
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; set; } = null!;
     [PluginService] public static IGameGui GameGui { get; set; } = null!;
     [PluginService] public static IFramework Framework { get; set; } = null!;
+    [PluginService] public static IGameInteropProvider Hooker { get; set; } = null!;
+    [PluginService] public static IPluginLog PluginLog { get; set; } = null!;
 }

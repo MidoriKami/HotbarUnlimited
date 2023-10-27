@@ -15,6 +15,7 @@ using KamiLib.UserInterface;
 namespace HotbarUnlimited.Views.Config;
 
 public class ConfigurationWindow : TabbedSelectionWindow {
+    private Configuration Config => HotbarUnlimitedSystem.Config;
     private readonly List<ISelectionWindowTab> tabs;
     private readonly List<ITabItem> regularTabs;
     
@@ -45,6 +46,10 @@ public class ConfigurationWindow : TabbedSelectionWindow {
         if (!Service.ClientState.IsLoggedIn) return;
 
         Toggle();
+    }
+    
+    public override void OnClose() {
+        Config.EditModeEnabled = false;
     }
 }
 

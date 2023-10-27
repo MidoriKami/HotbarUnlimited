@@ -18,9 +18,9 @@ public class Configuration : IPluginConfiguration {
     [NonSerialized] public bool ResetJob = false;
     [NonSerialized] public Dictionary<string, bool> EditEnabledHotbars = ActionBarController.ActionBars.ToDictionary(k => k, v => false);
     
-    public void Save() {
+    public unsafe void Save() {
         if (Service.ClientState is not { LocalPlayer.ClassJob.GameData: { } classJob }) return;
 
-        CharacterFileController.SaveFile($"{classJob.NameEnglish}.config.json", typeof(Configuration), this);
+        CharacterFileController.SaveFile($"{classJob.NameEnglish}-{AddonConfig.Instance()->ModuleData->CurrentHudLayout:00}.config.json", typeof(Configuration), this);
     }
 }
