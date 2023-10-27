@@ -12,6 +12,8 @@ public class Configuration : IPluginConfiguration {
     public int Version { get; set; } = 1;
 
     public Dictionary<string, Dictionary<int, Vector2>> SlotPositions = new();
+    public Dictionary<string, Dictionary<int, float>> SlotScales = new();
+    public Dictionary<string, Vector2> ContainerPositions = new();
 
     [NonSerialized] public bool EditModeEnabled = false;
     [NonSerialized] public HashSet<string> DataChanged = new();

@@ -144,38 +144,58 @@ public unsafe class HotbarSelectable : ISelectable, IDrawable {
     }
     
     public void Draw() {
-        if (Config.SlotPositions.TryGetValue(HotbarName, out var indexDictionary)) {
+        if (Config.SlotPositions.TryGetValue(HotbarName, out var indexDictionary) && Config.SlotScales.TryGetValue(HotbarName, out var indexScales)) {
             var addon = (AtkUnitBase*) Service.GameGui.GetAddonByName(HotbarName);
             var containingNode = addon->GetNodeById(2);
             var containingNodePosition = new Vector2(containingNode->X, containingNode->Y);
             var configChanged = false;
             
-            if (ImGui.BeginTable("HotbarPositionTable", 2)) {
-                ImGui.TableSetupColumn("##IndexColumn", ImGuiTableColumnFlags.WidthFixed, 75.0f * ImGuiHelpers.GlobalScale);
-                ImGui.TableSetupColumn("##PositionColumn", ImGuiTableColumnFlags.WidthStretch);
+            if (ImGui.BeginTable("HotbarPositionTable", 3)) {
+                ImGui.TableSetupColumn("Element##IndexColumn", ImGuiTableColumnFlags.WidthFixed, 75.0f * ImGuiHelpers.GlobalScale);
+                ImGui.TableSetupColumn("Position##PositionColumn", ImGuiTableColumnFlags.WidthStretch, 2.0f);
+                ImGui.TableSetupColumn("Scale##ScaleColumn", ImGuiTableColumnFlags.WidthStretch, 1.0f);
                     
-                ImGui.TableNextColumn();
-                ImGui.Text($"Container");
+                ImGui.TableHeadersRow();
                 
                 ImGui.TableNextColumn();
+                ImGuiHelpers.ScaledDummy(3.0f);
+                ImGui.Text("Container");
+                
+                ImGui.TableNextColumn();
+                ImGuiHelpers.ScaledDummy(3.0f);
                 ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
                 if (ImGui.DragFloat2($"##Container{HotbarName}", ref containingNodePosition)) {
-                    containingNode->SetPositionFloat(containingNodePosition.X, containingNodePosition.Y);
+                    Config.ContainerPositions[HotbarName] = containingNodePosition;
+                    Config.DataChanged.Add(HotbarName);
+                    configChanged = true;
                 }
-                
-                foreach (var (index, position) in indexDictionary) {
+
+                ImGui.TableNextColumn();
+                ImGuiHelpers.ScaledDummy(3.0f);
+                if (indexDictionary.Count != indexScales.Count) return;
+                foreach(var index in Enumerable.Range(0, indexDictionary.Count)) {
                     ImGui.TableNextColumn();
                     ImGui.Text($"{index + 1}");
 
                     ImGui.TableNextColumn();
-                    var positionValue = position;
+                    var positionValue = indexDictionary[index];
                     ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
                     if (ImGui.DragFloat2($"##{HotbarName}{index}", ref positionValue)) {
                         Config.SlotPositions[HotbarName][index] = positionValue;
                         Config.DataChanged.Add(HotbarName);
                         configChanged = true;
                     }
+
+                    ImGui.TableNextColumn();
+                    var scaleValue = indexScales[index];
+                    ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+                    if (ImGui.DragFloat($"##{HotbarName}{index}", ref scaleValue, 0.1f, 0.10f, 5.0f)) {
+                        Config.SlotScales[HotbarName][index] = scaleValue;
+                        Config.DataChanged.Add(HotbarName);
+                        configChanged = true;
+                    }
                 }
+
                 ImGui.EndTable();
             }
 

@@ -60,17 +60,32 @@ public unsafe class ActionBarController : IDisposable {
 
     private void UpdateSlotPositions(AddonArgs args, AtkUnitBase* addon) {
         var hotbar = (AddonActionBarBase*) addon;
+        
+        var containingNode = addon->GetNodeById(2);
+        if (Config.ContainerPositions.TryGetValue(args.AddonName, out var containerPosition)) {
+            containingNode->SetPositionFloat(containerPosition.X, containerPosition.Y);
+        }
+        else { // Value not found, so lets save what it currently is
+            Config.ContainerPositions.TryAdd(args.AddonName, new Vector2(containingNode->X, containingNode->Y));
+        }
+        
         foreach (var index in Enumerable.Range(0, hotbar->Slot.Length)) {
             var slot = hotbar->Slot.GetPointer(index);
-            var slotContainer = slot->ComponentDragDrop->AtkComponentBase.OwnerNode->AtkResNode;
+            ref var slotContainer = ref slot->ComponentDragDrop->AtkComponentBase.OwnerNode->AtkResNode;
 
             originalSlotPositions.TryAdd((args.AddonName, index), new Vector2(slotContainer.ParentNode->X, slotContainer.ParentNode->Y));
-            if (Config.SlotPositions.TryGetValue(args.AddonName, out var indexDictionary) && indexDictionary.TryGetValue(index, out var position)) {
+            if (Config.SlotPositions.TryGetValue(args.AddonName, out var indexDictionary) && 
+                indexDictionary.TryGetValue(index, out var position) && 
+                Config.SlotScales.TryGetValue(args.AddonName, out var scaleDictionary) &&
+                scaleDictionary.TryGetValue(index, out var scale)) {
+                slotContainer.ParentNode->SetScale(scale, scale);
                 slotContainer.ParentNode->SetPositionFloat(position.X, position.Y);
             }
             else { // Value not found, so lets save what it currently is
                 Config.SlotPositions.TryAdd(args.AddonName, new Dictionary<int, Vector2>());
                 Config.SlotPositions[args.AddonName].TryAdd(index, new Vector2(slotContainer.ParentNode->X, slotContainer.ParentNode->Y));
+                Config.SlotScales.TryAdd(args.AddonName, new Dictionary<int, float>());
+                Config.SlotScales[args.AddonName].TryAdd(index, slotContainer.ScaleX);
             }
         }
     }
@@ -92,6 +107,7 @@ public unsafe class ActionBarController : IDisposable {
                 ref var slotContainer = ref slot->ComponentDragDrop->AtkComponentBase.OwnerNode->AtkResNode.ParentNode;
 
                 if (originalSlotPositions.TryGetValue((addonName, index), out var position)) {
+                    slotContainer->SetScale(1.0f, 1.0f);
                     slotContainer->SetPositionFloat(position.X, position.Y);
                 }
             }
