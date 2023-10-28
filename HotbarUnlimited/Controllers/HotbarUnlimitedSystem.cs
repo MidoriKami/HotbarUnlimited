@@ -54,7 +54,7 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
 
         Service.Framework.Update += OnFrameworkUpdate;
         
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, new[] { "Tooltip", "ActionDetail" }, TooltipOnDraw);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, new[] { "Tooltip", "ActionDetail" }, TooltipOnDraw);
     }
     
     private void TooltipOnDraw(AddonEvent type, AddonArgs args) {
