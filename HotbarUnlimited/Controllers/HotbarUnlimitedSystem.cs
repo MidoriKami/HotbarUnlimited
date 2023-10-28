@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc.UserFileManager;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiLib.FileIO;
 
 namespace HotbarUnlimited.Controllers;
@@ -50,6 +53,15 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
         hudLayoutChangedHook?.Enable();
 
         Service.Framework.Update += OnFrameworkUpdate;
+        
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, new[] { "Tooltip", "ActionDetail" }, TooltipOnDraw);
+    }
+    
+    private void TooltipOnDraw(AddonEvent type, AddonArgs args) {
+        if (Config.EditModeEnabled) {
+            var addon = (AtkUnitBase*) args.Addon;
+            addon->IsVisible = false;
+        }
     }
 
     private void OnFrameworkUpdate(IFramework framework) {
@@ -86,6 +98,8 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
     }
 
     public void Dispose() {
+        Service.AddonLifecycle.UnregisterListener(TooltipOnDraw);
+        
         Service.Framework.Update -= OnFrameworkUpdate;
 
         hudLayoutChangedHook?.Dispose();
