@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using HotbarUnlimited.Controllers;
 using ImGuiNET;
+using KamiLib.Utility;
 
 namespace HotbarUnlimited.Views.Overlay;
 
@@ -75,6 +76,23 @@ public unsafe class OverlayWindow : Window {
                     Config.SlotPositions.TryAdd(addonName, new Dictionary<int, Vector2>());
                     Config.SlotPositions[addonName].TryAdd(index, position);
 
+                    if (Bound.IsCursorInWindow()) {
+                        var scaleChanged = false;
+                        if (ImGui.GetIO().MouseWheel > 0) {
+                            Config.SlotScales[addonName][index] += 0.10f;
+                            scaleChanged = true;
+                        }
+                        else if (ImGui.GetIO().MouseWheel < 0) {
+                            Config.SlotScales[addonName][index] -= 0.10f;
+                            scaleChanged = true;
+                        }
+
+                        if (scaleChanged) {
+                            var scale = Config.SlotScales[addonName][index];
+                            containingNode.ParentNode->SetScale(scale, scale);
+                        }
+                    }
+                    
                     if (ImGui.IsWindowFocused()) {
                         if (Config.SlotPositions[addonName][index] != position) {
                             Config.SlotPositions[addonName][index] = position;
