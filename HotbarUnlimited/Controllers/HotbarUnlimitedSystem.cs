@@ -27,10 +27,10 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
 
         Service.Framework.Update += OnFrameworkUpdate;
         
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, new[] { "Tooltip", "ActionDetail", "ItemDetail" }, TooltipOnDraw);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, new[] { "Tooltip", "ActionDetail", "ItemDetail" }, OnTooltipPreDraw);
     }
     
-    private void TooltipOnDraw(AddonEvent type, AddonArgs args) {
+    private void OnTooltipPreDraw(AddonEvent type, AddonArgs args) {
         if (Config.EditModeEnabled) {
             var addon = (AtkUnitBase*) args.Addon;
             addon->IsVisible = false;
@@ -71,7 +71,7 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
     }
 
     public void Dispose() {
-        Service.AddonLifecycle.UnregisterListener(TooltipOnDraw);
+        Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
         
         Service.Framework.Update -= OnFrameworkUpdate;
 
