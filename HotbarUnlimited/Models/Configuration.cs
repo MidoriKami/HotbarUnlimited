@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Configuration;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using HotbarUnlimited.Controllers;
 using KamiLib.FileIO;
 
