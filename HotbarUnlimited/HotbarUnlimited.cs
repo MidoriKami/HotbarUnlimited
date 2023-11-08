@@ -15,12 +15,12 @@ public sealed class HotbarUnlimitedPlugin : IDalamudPlugin {
 
         KamiCommon.Initialize(pluginInterface, "HotbarUnlimited");
         
+        System = new HotbarUnlimitedSystem();
+        
         KamiCommon.WindowManager.AddConfigurationWindow(new ConfigurationWindow(), true);
         KamiCommon.WindowManager.AddWindow(new OverlayWindow());
         
         CommandController.RegisterMainCommand("/hotbarunlimited", "/uhotbar");
-        
-        System = new HotbarUnlimitedSystem();
     }
 
     public void Dispose() {
