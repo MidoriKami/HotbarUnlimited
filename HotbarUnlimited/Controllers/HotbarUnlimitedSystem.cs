@@ -11,6 +11,7 @@ namespace HotbarUnlimited.Controllers;
 
 public unsafe class HotbarUnlimitedSystem : IDisposable {
     public static Configuration Config = null!;
+    public static bool HudLayoutOpen;
 
     private readonly ActionBarController actionBarController;
     private uint playerClassJob = uint.MaxValue;
@@ -28,6 +29,8 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
         Service.Framework.Update += OnFrameworkUpdate;
         
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, new[] { "Tooltip", "ActionDetail", "ItemDetail" }, OnTooltipPreDraw);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreSetup, "HudLayout", OnHudLayoutOpen);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "HudLayout", OnHudLayoutClose);
     }
     
     private void OnTooltipPreDraw(AddonEvent type, AddonArgs args) {
@@ -37,6 +40,15 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
         }
     }
 
+    private void OnHudLayoutOpen(AddonEvent type, AddonArgs args) {
+        HudLayoutOpen = true;
+        actionBarController.ResetAddons();
+    }
+
+    private void OnHudLayoutClose(AddonEvent type, AddonArgs args) {
+        HudLayoutOpen = false;
+    }
+    
     private void OnFrameworkUpdate(IFramework framework) {
         if (Service.ClientState is not { LocalPlayer.ClassJob.GameData: { } classJob }) return;
         
@@ -72,7 +84,9 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
 
     public void Dispose() {
         Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
-        
+        Service.AddonLifecycle.UnregisterListener(OnHudLayoutOpen);
+        Service.AddonLifecycle.UnregisterListener(OnHudLayoutClose);
+
         Service.Framework.Update -= OnFrameworkUpdate;
 
         hudLayoutChangedHook?.Dispose();

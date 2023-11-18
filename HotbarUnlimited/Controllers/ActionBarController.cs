@@ -37,6 +37,8 @@ public unsafe class ActionBarController : IDisposable {
     }
 
     private void OnActionBarDraw(AddonEvent type, AddonArgs args) {
+        if (HotbarUnlimitedSystem.HudLayoutOpen) return;
+        
         var windowSize = ImGui.GetMainViewport().Size;
         var addon = (AtkUnitBase*) args.Addon;
 
