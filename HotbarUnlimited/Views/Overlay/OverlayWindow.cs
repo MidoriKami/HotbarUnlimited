@@ -94,7 +94,7 @@ public unsafe class OverlayWindow : Window {
                     }
                     
                     if (ImGui.IsWindowFocused()) {
-                        if (Config.SlotPositions[addonName][index] != position) {
+                        if (Config.SlotPositions[addonName][index] != position / addon->AtkUnitBase.Scale) {
                             Config.SlotPositions[addonName][index] = position / addon->AtkUnitBase.Scale;
                             savePending = true;
                         }
