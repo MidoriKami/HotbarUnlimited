@@ -30,6 +30,9 @@ public unsafe class OverlayWindow : Window {
         IsOpen = Service.ClientState.IsLoggedIn && Config.EditModeEnabled;
     }
 
+    public override bool DrawConditions() 
+        => Service.ClientState is not ({ IsLoggedIn: false } or { IsPvP: true });
+
     public override void Draw() {
         foreach (var addonName in ActionBarController.ActionBars) {
             var addon = (AddonActionBarBase*) Service.GameGui.GetAddonByName(addonName);

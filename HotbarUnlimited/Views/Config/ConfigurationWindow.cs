@@ -36,7 +36,8 @@ public class ConfigurationWindow : TabbedSelectionWindow {
         CommandController.RegisterCommands(this);
     }
 
-    public override bool DrawConditions() => Service.ClientState is { IsLoggedIn: true };
+    public override bool DrawConditions() 
+        => Service.ClientState is not ({ IsLoggedIn: false } or { IsPvP: true });
 
     protected override IEnumerable<ISelectionWindowTab> GetTabs() => tabs;
     protected override IEnumerable<ITabItem> GetRegularTabs() => regularTabs;

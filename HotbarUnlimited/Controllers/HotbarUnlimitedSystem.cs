@@ -36,6 +36,7 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
     }
     
     private void OnEnterPvP() {
+        Config.EditModeEnabled = false;
         actionBarController.ResetAddons();
     }
     
