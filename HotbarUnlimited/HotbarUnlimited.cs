@@ -17,7 +17,7 @@ public sealed class HotbarUnlimitedPlugin : IDalamudPlugin {
         
         System = new HotbarUnlimitedSystem();
         
-        KamiCommon.WindowManager.AddConfigurationWindow(new ConfigurationWindow(), true);
+        KamiCommon.WindowManager.AddConfigurationWindow(new ConfigurationWindow());
         KamiCommon.WindowManager.AddWindow(new OverlayWindow());
         
         CommandController.RegisterMainCommand("/hotbarunlimited", "/uhotbar");

@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using HotbarUnlimited.Controllers;
 using ImGuiNET;
 using KamiLib.Command;
+using KamiLib.Game;
 using KamiLib.Interfaces;
 using KamiLib.System;
 using KamiLib.UserInterface;
@@ -45,6 +46,10 @@ public class ConfigurationWindow : TabbedSelectionWindow {
     [BaseCommandHandler("OpenConfigWindow")]
     public void OpenConfigWindow() {
         if (!Service.ClientState.IsLoggedIn) return;
+        if (Service.ClientState.IsPvP) {
+            Chat.PrintError("The configuration menu cannot be opened while in a PvP area");
+            return;
+        }
 
         Toggle();
     }
