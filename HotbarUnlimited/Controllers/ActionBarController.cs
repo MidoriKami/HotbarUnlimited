@@ -37,6 +37,7 @@ public unsafe class ActionBarController : IDisposable {
     }
 
     private void OnActionBarDraw(AddonEvent type, AddonArgs args) {
+        if (Service.ClientState.IsPvP) return;
         if (HotbarUnlimitedSystem.HudLayoutOpen) return;
         
         var windowSize = ImGui.GetMainViewport().Size;

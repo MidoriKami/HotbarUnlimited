@@ -27,10 +27,16 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
         hudLayoutChangedHook?.Enable();
 
         Service.Framework.Update += OnFrameworkUpdate;
+
+        Service.ClientState.EnterPvP += OnEnterPvP;
         
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, new[] { "Tooltip", "ActionDetail", "ItemDetail" }, OnTooltipPreDraw);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreSetup, "HudLayout", OnHudLayoutOpen);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "HudLayout", OnHudLayoutClose);
+    }
+    
+    private void OnEnterPvP() {
+        actionBarController.ResetAddons();
     }
     
     private void OnTooltipPreDraw(AddonEvent type, AddonArgs args) {
@@ -88,6 +94,8 @@ public unsafe class HotbarUnlimitedSystem : IDisposable {
         Service.AddonLifecycle.UnregisterListener(OnHudLayoutClose);
 
         Service.Framework.Update -= OnFrameworkUpdate;
+        
+        Service.ClientState.EnterPvP -= OnEnterPvP;
 
         hudLayoutChangedHook?.Dispose();
         actionBarController.Dispose();
